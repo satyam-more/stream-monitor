@@ -2,8 +2,8 @@
 Business logic and service layer
 """
 
-from .database import DatabaseService
-from .alert_engine import AlertEngine
-from .sensor_tracker import SensorTracker
+from . import database
+from .alert_engine import AlertEngine, alert_engine
+from .sensor_tracker import SensorTracker, sensor_tracker
 
-__all__ = ["DatabaseService", "AlertEngine", "SensorTracker"]
+__all__ = ["database", "AlertEngine", "alert_engine", "SensorTracker", "sensor_tracker"]

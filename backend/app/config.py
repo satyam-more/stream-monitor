@@ -25,8 +25,12 @@ class Settings(BaseSettings):
     # Stream Monitoring
     stream_timeout_seconds: int = 10
     
-    # CORS
-    cors_origins: List[str] = ["http://localhost:5173", "http://localhost:3000"]
+    # CORS - simple list
+    cors_origins: str = "http://localhost:5173,http://localhost:3000"
+    
+    def get_cors_origins(self) -> List[str]:
+        """Parse CORS origins from comma-separated string"""
+        return [origin.strip() for origin in self.cors_origins.split(",")]
     
     class Config:
         env_file = ".env"

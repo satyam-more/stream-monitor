@@ -71,13 +71,25 @@ async def websocket_data_ingestion(websocket: WebSocket):
                 # Broadcast alert to frontend clients
                 await broadcast_to_frontend({
                     "type": "alert",
-                    "data": alert.dict()
+                    "data": {
+                        "device_id": alert.device_id,
+                        "type": alert.type,
+                        "value": alert.value,
+                        "threshold": alert.threshold,
+                        "timestamp": alert.timestamp.isoformat(),
+                        "message": alert.message
+                    }
                 })
             
-            # Broadcast new data to frontend clients
+            # Broadcast new data to frontend clients (convert datetime to string)
             await broadcast_to_frontend({
                 "type": "new_data",
-                "data": data_to_save
+                "data": {
+                    "device_id": telemetry.device_id,
+                    "timestamp": telemetry.timestamp.isoformat(),
+                    "type": telemetry.type,
+                    "value": telemetry.value
+                }
             })
             
     except WebSocketDisconnect:
