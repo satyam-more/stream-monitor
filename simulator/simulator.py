@@ -51,39 +51,43 @@ def generate_telemetry_data():
 
 async def send_data():
     """Connect to WebSocket and send data continuously"""
-    print(f"Connecting to {WEBSOCKET_URL}...")
     
-    try:
-        async with websockets.connect(WEBSOCKET_URL) as websocket:
-            print("✅ Connected to backend!")
-            print(f"Simulating {len(SENSORS)} sensors: {', '.join(SENSORS)}")
-            print(f"Sending data every {SEND_INTERVAL} second(s)")
-            print("-" * 50)
+    while True:  # Keep trying to reconnect
+        try:
+            print(f"Connecting to {WEBSOCKET_URL}...")
             
-            while True:
-                # Generate data
-                data = generate_telemetry_data()
+            async with websockets.connect(WEBSOCKET_URL) as websocket:
+                print("✅ Connected to backend!")
+                print(f"Simulating {len(SENSORS)} sensors: {', '.join(SENSORS)}")
+                print(f"Sending data every {SEND_INTERVAL} second(s)")
+                print("-" * 50)
                 
-                # Send to backend
-                await websocket.send(json.dumps(data))
-                
-                # Print for debugging
-                print(f"📤 Sent: {data['device_id']} | {data['type']} = {data['value']}")
-                
-                # Wait before sending next
-                await asyncio.sleep(SEND_INTERVAL)
-                
-    except websockets.exceptions.WebSocketException as e:
-        print(f"❌ WebSocket error: {e}")
-        print("Retrying in 5 seconds...")
-        await asyncio.sleep(5)
-        # TODO: Add reconnection logic
-        
-    except KeyboardInterrupt:
-        print("\n🛑 Simulator stopped by user")
-        
-    except Exception as e:
-        print(f"❌ Error: {e}")
+                while True:
+                    # Generate data
+                    data = generate_telemetry_data()
+                    
+                    # Send to backend
+                    await websocket.send(json.dumps(data))
+                    
+                    # Print for debugging
+                    print(f"📤 Sent: {data['device_id']} | {data['type']} = {data['value']}")
+                    
+                    # Wait before sending next
+                    await asyncio.sleep(SEND_INTERVAL)
+                    
+        except websockets.exceptions.WebSocketException as e:
+            print(f"❌ WebSocket error: {e}")
+            print("🔄 Retrying in 5 seconds...")
+            await asyncio.sleep(5)
+            
+        except KeyboardInterrupt:
+            print("\n🛑 Simulator stopped by user")
+            break
+            
+        except Exception as e:
+            print(f"❌ Error: {e}")
+            print("🔄 Retrying in 5 seconds...")
+            await asyncio.sleep(5)
 
 
 def main():

@@ -70,7 +70,7 @@ async def websocket_data_ingestion(websocket: WebSocket):
                 print(f"🚨 ALERT: {alert.message}")
                 # Broadcast alert to frontend clients
                 await broadcast_to_frontend({
-                    "type": "alert",
+                    "event": "alert",
                     "data": {
                         "device_id": alert.device_id,
                         "type": alert.type,
@@ -83,7 +83,7 @@ async def websocket_data_ingestion(websocket: WebSocket):
             
             # Broadcast new data to frontend clients (convert datetime to string)
             await broadcast_to_frontend({
-                "type": "new_data",
+                "event": "new_data",
                 "data": {
                     "device_id": telemetry.device_id,
                     "timestamp": telemetry.timestamp.isoformat(),

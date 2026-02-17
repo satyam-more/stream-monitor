@@ -18,8 +18,12 @@ async def connect_to_mongodb(mongodb_uri: str, database_name: str):
     print(f"URI: {mongodb_uri}")
     
     try:
-        # Connect to MongoDB
-        client = AsyncIOMotorClient(mongodb_uri)
+        # Connect to MongoDB with SSL settings
+        client = AsyncIOMotorClient(
+            mongodb_uri,
+            tlsAllowInvalidCertificates=True,
+            serverSelectionTimeoutMS=5000
+        )
         db = client[database_name]
         
         # Test connection

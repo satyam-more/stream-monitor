@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: stream-monitor-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: DATABASE_NAME
+        value: stream_monitor
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        fromGroup: web
+      - key: ALERT_TEMP_THRESHOLD
+        value: 50
+      - key: ALERT_VIBRATION_THRESHOLD
+        value: 0.08
+      - key: STREAM_TIMEOUT_SECONDS
+        value: 10
+      - key: CORS_ORIGINS
+        value: "*"

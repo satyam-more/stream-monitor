@@ -5,6 +5,7 @@ Loads settings from environment variables
 
 from pydantic_settings import BaseSettings
 from typing import List
+import os
 
 
 class Settings(BaseSettings):
@@ -16,7 +17,7 @@ class Settings(BaseSettings):
     
     # Server Configuration
     host: str = "0.0.0.0"
-    port: int = 8000
+    port: int = int(os.getenv("PORT", "8000"))  # Use PORT from environment for deployment
     
     # Alert Thresholds
     alert_temp_threshold: float = 50.0
@@ -30,6 +31,9 @@ class Settings(BaseSettings):
     
     def get_cors_origins(self) -> List[str]:
         """Parse CORS origins from comma-separated string"""
+        # Allow all origins if * is specified
+        if self.cors_origins == "*":
+            return ["*"]
         return [origin.strip() for origin in self.cors_origins.split(",")]
     
     class Config:
