@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import settings
-from app.services.database import db_service
+from app.services import database
 from app.routes import data_router, sensors_router, websocket_router
 
 
@@ -16,16 +16,24 @@ from app.routes import data_router, sensors_router, websocket_router
 async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
+    print("=" * 50)
     print("🚀 Starting Stream Monitor Backend...")
-    await db_service.connect(settings.mongodb_uri, settings.database_name)
+    print("=" * 50)
+    
+    # Connect to MongoDB
+    await database.connect_to_mongodb(settings.mongodb_uri, settings.database_name)
+    
     print(f"✅ Server running on {settings.host}:{settings.port}")
+    print("=" * 50)
     
     yield
     
     # Shutdown
+    print("\n" + "=" * 50)
     print("🛑 Shutting down Stream Monitor Backend...")
-    await db_service.disconnect()
+    await database.disconnect_from_mongodb()
     print("✅ Shutdown complete")
+    print("=" * 50)
 
 
 # Initialize FastAPI application
@@ -65,14 +73,19 @@ async def root():
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
+    db = database.get_database()
+    
     return {
         "status": "healthy",
-        "database": "connected" if db_service.db else "disconnected"
+        "database": "connected" if db else "disconnected"
     }
 
 
 if __name__ == "__main__":
     import uvicorn
+    
+    print("Starting server...")
+    
     uvicorn.run(
         "app.main:app",
         host=settings.host,

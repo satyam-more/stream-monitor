@@ -3,9 +3,18 @@ WebSocket endpoints for real-time communication
 """
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from datetime import datetime
 import json
 
+from app.models import TelemetryData, Alert
+from app.services.database import insert_telemetry_data, get_database
+from app.services.alert_engine import alert_engine
+from app.services.sensor_tracker import sensor_tracker
+
 router = APIRouter(tags=["websocket"])
+
+# Store connected frontend clients (global variable - fresher style)
+frontend_clients = []
 
 
 @router.websocket("/stream/data")
@@ -22,20 +31,59 @@ async def websocket_data_ingestion(websocket: WebSocket):
     }
     """
     await websocket.accept()
-    print(f"Simulator connected: {websocket.client}")
+    print(f"✅ Simulator connected: {websocket.client}")
     
     try:
         while True:
             # Receive data from simulator
-            data = await websocket.receive_text()
-            print(f"Received data: {data}")
+            data_str = await websocket.receive_text()
             
-            # TODO: Implement data validation, storage, and alert checking
+            # Parse JSON
+            data_dict = json.loads(data_str)
+            
+            print(f"📥 Received: {data_dict}")
+            
+            # Validate data using Pydantic model
+            try:
+                telemetry = TelemetryData(**data_dict)
+            except Exception as e:
+                print(f"⚠️ Invalid data format: {e}")
+                continue
+            
+            # Convert to dict for MongoDB
+            data_to_save = {
+                "device_id": telemetry.device_id,
+                "timestamp": telemetry.timestamp,
+                "type": telemetry.type,
+                "value": telemetry.value
+            }
+            
+            # Save to MongoDB
+            await insert_telemetry_data(data_to_save)
+            
+            # Update sensor tracker
+            sensor_tracker.update_sensor(telemetry.device_id, telemetry.timestamp)
+            
+            # Check for alerts
+            alert = alert_engine.check_thresholds(telemetry)
+            if alert:
+                print(f"🚨 ALERT: {alert.message}")
+                # Broadcast alert to frontend clients
+                await broadcast_to_frontend({
+                    "type": "alert",
+                    "data": alert.dict()
+                })
+            
+            # Broadcast new data to frontend clients
+            await broadcast_to_frontend({
+                "type": "new_data",
+                "data": data_to_save
+            })
             
     except WebSocketDisconnect:
-        print(f"Simulator disconnected: {websocket.client}")
+        print(f"❌ Simulator disconnected: {websocket.client}")
     except Exception as e:
-        print(f"Error in data ingestion: {e}")
+        print(f"❌ Error in data ingestion: {e}")
         await websocket.close()
 
 
@@ -51,16 +99,46 @@ async def websocket_frontend(websocket: WebSocket):
     - status_update: Sensor online/offline status changes
     """
     await websocket.accept()
-    print(f"Frontend client connected: {websocket.client}")
+    print(f"✅ Frontend client connected: {websocket.client}")
+    
+    # Add to connected clients list
+    frontend_clients.append(websocket)
     
     try:
-        # TODO: Implement connection manager and event broadcasting
+        # Keep connection alive
         while True:
-            # Keep connection alive
+            # Wait for messages (ping/pong)
             await websocket.receive_text()
             
     except WebSocketDisconnect:
-        print(f"Frontend client disconnected: {websocket.client}")
+        print(f"❌ Frontend client disconnected: {websocket.client}")
+        # Remove from clients list
+        if websocket in frontend_clients:
+            frontend_clients.remove(websocket)
     except Exception as e:
-        print(f"Error in frontend websocket: {e}")
+        print(f"❌ Error in frontend websocket: {e}")
+        if websocket in frontend_clients:
+            frontend_clients.remove(websocket)
         await websocket.close()
+
+
+async def broadcast_to_frontend(message):
+    """Send message to all connected frontend clients"""
+    # Convert message to JSON string
+    message_str = json.dumps(message)
+    
+    # Send to all clients
+    disconnected = []
+    for client in frontend_clients:
+        try:
+            await client.send_text(message_str)
+        except:
+            # Client disconnected
+            disconnected.append(client)
+    
+    # Remove disconnected clients
+    for client in disconnected:
+        frontend_clients.remove(client)
+    
+    if len(frontend_clients) > 0:
+        print(f"📤 Broadcasted to {len(frontend_clients)} frontend client(s)")
