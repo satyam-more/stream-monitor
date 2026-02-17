@@ -4,6 +4,7 @@ Database service for MongoDB operations
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from typing import Optional
+import asyncio
 
 # Global variables (fresher style)
 client = None
@@ -18,21 +19,33 @@ async def connect_to_mongodb(mongodb_uri: str, database_name: str):
     print(f"URI: {mongodb_uri}")
     
     try:
-        # Connect to MongoDB with SSL settings
+        # Connect to MongoDB with relaxed SSL settings
         client = AsyncIOMotorClient(
             mongodb_uri,
+            tls=True,
             tlsAllowInvalidCertificates=True,
-            serverSelectionTimeoutMS=5000
+            tlsAllowInvalidHostnames=True,
+            serverSelectionTimeoutMS=10000,
+            connectTimeoutMS=10000,
+            socketTimeoutMS=10000,
+            retryWrites=True,
+            w='majority'
         )
         db = client[database_name]
         
-        # Test connection
-        await db.command('ping')
+        # Test connection with timeout
+        await asyncio.wait_for(db.command('ping'), timeout=10.0)
         print("✅ MongoDB connected successfully!")
         
         # Create indexes
         await create_indexes()
         
+    except asyncio.TimeoutError:
+        print(f"⚠️ MongoDB connection timeout")
+        print("⚠️ Running in NO-DATABASE mode (data will not be saved)")
+        print("⚠️ This is OK for demonstration purposes")
+        client = None
+        db = None
     except Exception as e:
         print(f"⚠️ MongoDB connection failed: {e}")
         print("⚠️ Running in NO-DATABASE mode (data will not be saved)")
