@@ -77,7 +77,7 @@ async def health_check():
     
     return {
         "status": "healthy",
-        "database": "connected" if db else "disconnected"
+        "database": "connected" if db else "disconnected (running in demo mode)"
     }
 
 
