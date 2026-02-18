@@ -6,7 +6,7 @@ Real-time IoT telemetry streaming system with Python FastAPI backend, React dash
 
 **🎯 Try it now - All services are deployed and running!**
 
-- **📊 Frontend Dashboard:** [https://your-app.netlify.app](https://your-app.netlify.app)
+- **📊 Frontend Dashboard:** [https://stream-monitor-web.netlify.app/]https://stream-monitor-web.netlify.app/)
 - **🔧 Backend API:** [https://stream-monitor-a4cr.onrender.com](https://stream-monitor-a4cr.onrender.com)
 - **📡 API Documentation:** [https://stream-monitor-a4cr.onrender.com/docs](https://stream-monitor-a4cr.onrender.com/docs)
 - **🎮 Simulator Control Panel:** [https://stream-monitor-simulator.onrender.com](https://stream-monitor-simulator.onrender.com)
