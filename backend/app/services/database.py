@@ -16,25 +16,25 @@ async def connect_to_mongodb(mongodb_uri: str, database_name: str):
     global client, db
     
     print(f"🔌 Connecting to MongoDB...")
-    print(f"URI: {mongodb_uri}")
+    print(f"Database: {database_name}")
     
     try:
-        # Connect to MongoDB with relaxed SSL settings
+        # Connect to MongoDB with relaxed SSL settings and shorter timeout
         client = AsyncIOMotorClient(
             mongodb_uri,
             tls=True,
             tlsAllowInvalidCertificates=True,
             tlsAllowInvalidHostnames=True,
-            serverSelectionTimeoutMS=10000,
-            connectTimeoutMS=10000,
-            socketTimeoutMS=10000,
+            serverSelectionTimeoutMS=5000,  # Reduced from 10000
+            connectTimeoutMS=5000,  # Reduced from 10000
+            socketTimeoutMS=5000,  # Reduced from 10000
             retryWrites=True,
             w='majority'
         )
         db = client[database_name]
         
-        # Test connection with timeout
-        await asyncio.wait_for(db.command('ping'), timeout=10.0)
+        # Test connection with shorter timeout
+        await asyncio.wait_for(db.command('ping'), timeout=5.0)
         print("✅ MongoDB connected successfully!")
         
         # Create indexes

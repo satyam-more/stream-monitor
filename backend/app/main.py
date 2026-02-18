@@ -20,8 +20,12 @@ async def lifespan(app: FastAPI):
     print("🚀 Starting Stream Monitor Backend...")
     print("=" * 50)
     
-    # Connect to MongoDB
-    await database.connect_to_mongodb(settings.mongodb_uri, settings.database_name)
+    # Connect to MongoDB (non-blocking, won't crash if fails)
+    try:
+        await database.connect_to_mongodb(settings.mongodb_uri, settings.database_name)
+    except Exception as e:
+        print(f"⚠️ MongoDB connection failed during startup: {e}")
+        print("⚠️ Continuing without database...")
     
     print(f"✅ Server running on {settings.host}:{settings.port}")
     print("=" * 50)
@@ -31,7 +35,10 @@ async def lifespan(app: FastAPI):
     # Shutdown
     print("\n" + "=" * 50)
     print("🛑 Shutting down Stream Monitor Backend...")
-    await database.disconnect_from_mongodb()
+    try:
+        await database.disconnect_from_mongodb()
+    except Exception as e:
+        print(f"⚠️ Error during shutdown: {e}")
     print("✅ Shutdown complete")
     print("=" * 50)
 
@@ -73,12 +80,30 @@ async def root():
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    db = database.get_database()
-    
-    return {
-        "status": "healthy",
-        "database": "connected" if db else "disconnected (running in demo mode)"
-    }
+    try:
+        db = database.get_database()
+        
+        # Try to ping database if connected
+        db_status = "disconnected"
+        if db:
+            try:
+                await db.command('ping')
+                db_status = "connected"
+            except:
+                db_status = "error"
+        
+        return {
+            "status": "healthy",
+            "database": db_status,
+            "message": "Backend is running" if not db else "Backend is running with database"
+        }
+    except Exception as e:
+        # Even if there's an error, return 200 to show backend is alive
+        return {
+            "status": "healthy",
+            "database": "unknown",
+            "message": f"Backend is running (health check error: {str(e)})"
+        }
 
 
 if __name__ == "__main__":
