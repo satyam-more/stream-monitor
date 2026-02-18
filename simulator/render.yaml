@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: stream-monitor-simulator
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python simulator.py
+    envVars:
+      - key: WEBSOCKET_URL
+        value: wss://stream-monitor-a4cr.onrender.com/stream/data
+      - key: SEND_INTERVAL
+        value: 1
