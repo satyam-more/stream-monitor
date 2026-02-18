@@ -254,7 +254,7 @@ All services are deployed and accessible:
 
 | Service | URL | Status |
 |---------|-----|--------|
-| **Frontend** | [https://your-app.netlify.app](https://your-app.netlify.app) | ✅ Live |
+| **Frontend** | [https://stream-monitor-web.netlify.app/](https://stream-monitor-web.netlify.app/) | ✅ Live |
 | **Backend API** | [https://stream-monitor-a4cr.onrender.com](https://stream-monitor-a4cr.onrender.com) | ✅ Live |
 | **API Docs** | [https://stream-monitor-a4cr.onrender.com/docs](https://stream-monitor-a4cr.onrender.com/docs) | ✅ Live |
 | **Simulator** | [https://stream-monitor-simulator.onrender.com](https://stream-monitor-simulator.onrender.com) | ✅ Live |
