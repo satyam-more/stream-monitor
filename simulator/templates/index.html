@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Simulator Control Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .status-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .status-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-connected {
+            background: #4CAF50;
+            box-shadow: 0 0 10px #4CAF50;
+        }
+
+        .status-disconnected {
+            background: #f44336;
+        }
+
+        .status-connecting {
+            background: #ff9800;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-start:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #f44336, #da190b);
+            color: white;
+        }
+
+        .btn-stop:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .last-message {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #333;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .message-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #666;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 IoT Simulator Control Panel</h1>
+        <p class="subtitle">Real-time Telemetry Data Generator</p>
+
+        <div id="alert" class="alert"></div>
+
+        <div class="status-card">
+            <div class="status-row">
+                <span class="status-label">Connection Status:</span>
+                <span class="status-value">
+                    <span id="status-indicator" class="status-indicator status-disconnected"></span>
+                    <span id="connection-status">Disconnected</span>
+                </span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Backend URL:</span>
+                <span class="status-value" id="backend-url">Loading...</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Sensors:</span>
+                <span class="status-value" id="sensors">Loading...</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="btn-start" class="btn-start" onclick="startSimulator()">▶ Start</button>
+            <button id="btn-stop" class="btn-stop" onclick="stopSimulator()" disabled>⏹ Stop</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value" id="messages-sent">0</div>
+                <div class="stat-label">Messages Sent</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="errors">0</div>
+                <div class="stat-label">Errors</div>
+            </div>
+        </div>
+
+        <div class="last-message">
+            <div class="message-title">Last Message:</div>
+            <div id="last-message">No messages yet</div>
+        </div>
+
+        <div class="footer">
+            Stream Monitor © 2026 | Powered by Flask & WebSocket
+        </div>
+    </div>
+
+    <script>
+        let statusInterval;
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        async function startSimulator() {
+            try {
+                const response = await fetch('/api/start', { method: 'POST' });
+                const data = await response.json();
+                showAlert(data.message, 'success');
+                updateButtons(true);
+                startStatusPolling();
+            } catch (error) {
+                showAlert('Failed to start simulator', 'error');
+            }
+        }
+
+        async function stopSimulator() {
+            try {
+                const response = await fetch('/api/stop', { method: 'POST' });
+                const data = await response.json();
+                showAlert(data.message, 'success');
+                updateButtons(false);
+            } catch (error) {
+                showAlert('Failed to stop simulator', 'error');
+            }
+        }
+
+        function updateButtons(running) {
+            document.getElementById('btn-start').disabled = running;
+            document.getElementById('btn-stop').disabled = !running;
+        }
+
+        async function updateStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+
+                // Update connection status
+                const statusText = data.stats.connection_status;
+                document.getElementById('connection-status').textContent = statusText;
+                
+                const indicator = document.getElementById('status-indicator');
+                indicator.className = 'status-indicator';
+                if (statusText === 'Connected') {
+                    indicator.classList.add('status-connected');
+                } else if (statusText.includes('Connecting')) {
+                    indicator.classList.add('status-connecting');
+                } else {
+                    indicator.classList.add('status-disconnected');
+                }
+
+                // Update stats
+                document.getElementById('messages-sent').textContent = data.stats.messages_sent;
+                document.getElementById('errors').textContent = data.stats.errors;
+
+                // Update config
+                document.getElementById('backend-url').textContent = data.config.websocket_url;
+                document.getElementById('sensors').textContent = data.config.sensors.join(', ');
+
+                // Update last message
+                if (data.stats.last_message) {
+                    document.getElementById('last-message').textContent = JSON.stringify(data.stats.last_message, null, 2);
+                }
+
+                // Update buttons
+                updateButtons(data.running);
+
+            } catch (error) {
+                console.error('Failed to update status:', error);
+            }
+        }
+
+        function startStatusPolling() {
+            if (statusInterval) clearInterval(statusInterval);
+            statusInterval = setInterval(updateStatus, 1000);
+        }
+
+        // Initial status update
+        updateStatus();
+        startStatusPolling();
+    </script>
+</body>
+</html>

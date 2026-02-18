@@ -1,1 +1,1 @@
-web: python simulator.py
+web: python app.py
