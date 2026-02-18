@@ -2,17 +2,35 @@
 
 Real-time IoT telemetry streaming system with Python FastAPI backend, React dashboard, and MongoDB storage.
 
+## 🌐 Live Demo
+
+**🎯 Try it now - All services are deployed and running!**
+
+- **📊 Frontend Dashboard:** [https://your-app.netlify.app](https://your-app.netlify.app)
+- **🔧 Backend API:** [https://stream-monitor-a4cr.onrender.com](https://stream-monitor-a4cr.onrender.com)
+- **📡 API Documentation:** [https://stream-monitor-a4cr.onrender.com/docs](https://stream-monitor-a4cr.onrender.com/docs)
+- **🎮 Simulator Control Panel:** [https://stream-monitor-simulator.onrender.com](https://stream-monitor-simulator.onrender.com)
+
+### Quick Start Demo:
+1. Open the [Simulator Control Panel](https://stream-monitor-simulator.onrender.com)
+2. Click the **"▶ START"** button
+3. Open the [Frontend Dashboard](https://your-app.netlify.app)
+4. Watch real-time data flow! 🚀
+
+---
+
 ## 🚀 Features
 
 - ✅ **Real-time Data Streaming** - WebSocket-based live telemetry updates
 - ✅ **Interactive Dashboard** - React-based UI with live charts and visualizations
+- ✅ **Web-Based Simulator** - Control panel with start/stop buttons and live statistics
 - ✅ **Smart Alerts** - Automatic notifications for threshold breaches
   - Temperature > 50°C
   - Vibration > 0.08g
   - Stream timeout detection (10 seconds)
 - ✅ **REST API** - Comprehensive endpoints for data retrieval and analytics
 - ✅ **MongoDB Storage** - Efficient time-series data storage with indexing
-- ✅ **Data Simulator** - Python-based telemetry data generator
+- ✅ **Fully Deployed** - Backend on Render, Frontend on Netlify, Simulator on Render
 
 ## 🏗️ Architecture
 
@@ -216,17 +234,61 @@ docker-compose up -d
 ## 📈 Development Roadmap
 
 - [x] Project setup and architecture
-- [ ] Backend API implementation
-- [ ] MongoDB integration
-- [ ] WebSocket real-time streaming
-- [ ] Alert system
-- [ ] Data simulator
-- [ ] React dashboard
-- [ ] Charts and visualizations
+- [x] Backend API implementation
+- [x] MongoDB integration
+- [x] WebSocket real-time streaming
+- [x] Alert system
+- [x] Data simulator with web GUI
+- [x] React dashboard
+- [x] Charts and visualizations
+- [x] Deployment to cloud (Render + Netlify)
+- [x] API documentation (Swagger)
 - [ ] Unit tests
 - [ ] Docker containerization
-- [ ] API documentation (Swagger)
-- [ ] Deployment
+
+## 🌐 Deployment
+
+### Live Services
+
+All services are deployed and accessible:
+
+| Service | URL | Status |
+|---------|-----|--------|
+| **Frontend** | [https://your-app.netlify.app](https://your-app.netlify.app) | ✅ Live |
+| **Backend API** | [https://stream-monitor-a4cr.onrender.com](https://stream-monitor-a4cr.onrender.com) | ✅ Live |
+| **API Docs** | [https://stream-monitor-a4cr.onrender.com/docs](https://stream-monitor-a4cr.onrender.com/docs) | ✅ Live |
+| **Simulator** | [https://stream-monitor-simulator.onrender.com](https://stream-monitor-simulator.onrender.com) | ✅ Live |
+
+### Deployment Stack
+
+- **Frontend:** Netlify (React + Vite + TypeScript)
+- **Backend:** Render (Python + FastAPI + WebSocket)
+- **Simulator:** Render (Python + Flask + WebSocket Client)
+- **Database:** MongoDB Atlas (Cloud)
+
+### How to Use the Deployed System
+
+1. **Start the Simulator:**
+   - Visit: https://stream-monitor-simulator.onrender.com
+   - Click the green **"▶ START"** button
+   - Watch the connection status turn green
+   - See real-time statistics (messages sent, errors)
+
+2. **View the Dashboard:**
+   - Visit: https://your-app.netlify.app
+   - You should see "WebSocket: Connected" in green
+   - Real-time data will appear in the Live Table
+   - Alerts will show when thresholds are exceeded
+
+3. **Explore the API:**
+   - Visit: https://stream-monitor-a4cr.onrender.com/docs
+   - Try out the interactive API documentation
+   - Test endpoints directly from the browser
+
+### Note on Free Tier
+- Services may sleep after 15 minutes of inactivity
+- First request takes 30-60 seconds to wake up
+- This is normal for free tier hosting
 
 ## 🤝 Contributing
 
