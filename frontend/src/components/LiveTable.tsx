@@ -76,21 +76,23 @@ const styles = {
   container: {
     backgroundColor: '#1e1e1e',
     borderRadius: '8px',
-    padding: '20px',
+    padding: 'clamp(10px, 3vw, 20px)',
     marginBottom: '20px',
   },
   title: {
     color: '#fff',
     marginBottom: '15px',
-    fontSize: '20px',
+    fontSize: 'clamp(16px, 4vw, 20px)',
   },
   tableContainer: {
     overflowY: 'auto' as const,
+    overflowX: 'auto' as const,
     maxHeight: '400px',
   },
   table: {
     width: '100%',
     borderCollapse: 'collapse' as const,
+    minWidth: '500px',
   },
   headerRow: {
     backgroundColor: '#2d2d2d',
@@ -98,26 +100,29 @@ const styles = {
     top: 0,
   },
   th: {
-    padding: '12px',
+    padding: 'clamp(8px, 2vw, 12px)',
     textAlign: 'left' as const,
     color: '#4CAF50',
     borderBottom: '2px solid #4CAF50',
+    fontSize: 'clamp(11px, 2vw, 14px)',
   },
   row: {
     borderBottom: '1px solid #333',
   },
   td: {
-    padding: '10px 12px',
+    padding: 'clamp(8px, 2vw, 12px)',
     color: '#ddd',
+    fontSize: 'clamp(11px, 2vw, 14px)',
   },
   noData: {
     padding: '20px',
     textAlign: 'center' as const,
     color: '#888',
+    fontSize: 'clamp(12px, 2.5vw, 14px)',
   },
   info: {
     color: '#888',
-    fontSize: '12px',
+    fontSize: 'clamp(10px, 2vw, 12px)',
     marginTop: '10px',
   },
 };

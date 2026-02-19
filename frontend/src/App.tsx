@@ -50,17 +50,17 @@ const styles = {
   },
   title: {
     color: '#4CAF50',
-    fontSize: '36px',
+    fontSize: 'clamp(24px, 5vw, 36px)',
     margin: '0 0 10px 0',
   },
   subtitle: {
     color: '#888',
-    fontSize: '16px',
+    fontSize: 'clamp(12px, 3vw, 16px)',
     margin: 0,
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: '2fr 1fr',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: '20px',
     marginBottom: '20px',
   },
@@ -73,7 +73,7 @@ const styles = {
   footer: {
     textAlign: 'center' as const,
     color: '#666',
-    fontSize: '12px',
+    fontSize: 'clamp(10px, 2vw, 12px)',
     marginTop: '30px',
     paddingTop: '20px',
     borderTop: '1px solid #333',

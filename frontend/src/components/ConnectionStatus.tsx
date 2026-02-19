@@ -43,8 +43,10 @@ const styles = {
   },
   statusBar: {
     display: 'flex',
-    gap: '30px',
+    flexWrap: 'wrap' as const,
+    gap: '20px',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   statusItem: {
     display: 'flex',
@@ -56,9 +58,11 @@ const styles = {
     height: '12px',
     borderRadius: '50%',
     animation: 'pulse 2s infinite',
+    flexShrink: 0,
   },
   label: {
     color: '#ddd',
-    fontSize: '14px',
+    fontSize: 'clamp(12px, 2.5vw, 14px)',
+    whiteSpace: 'nowrap' as const,
   },
 };

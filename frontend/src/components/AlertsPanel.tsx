@@ -47,13 +47,13 @@ const styles = {
   container: {
     backgroundColor: '#1e1e1e',
     borderRadius: '8px',
-    padding: '20px',
+    padding: 'clamp(10px, 3vw, 20px)',
     marginBottom: '20px',
   },
   title: {
     color: '#fff',
     marginBottom: '15px',
-    fontSize: '20px',
+    fontSize: 'clamp(16px, 4vw, 20px)',
   },
   alertsContainer: {
     maxHeight: '300px',
@@ -63,12 +63,13 @@ const styles = {
     padding: '20px',
     textAlign: 'center' as const,
     color: '#4CAF50',
+    fontSize: 'clamp(12px, 2.5vw, 14px)',
   },
   alert: {
     backgroundColor: '#2d1a1a',
     border: '2px solid #ff4444',
     borderRadius: '6px',
-    padding: '12px',
+    padding: 'clamp(10px, 2vw, 12px)',
     marginBottom: '10px',
     animation: 'fadeIn 0.3s ease-in',
   },
@@ -77,31 +78,35 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '8px',
+    flexWrap: 'wrap' as const,
+    gap: '8px',
   },
   alertIcon: {
-    fontSize: '20px',
+    fontSize: 'clamp(16px, 4vw, 20px)',
   },
   alertDevice: {
     color: '#fff',
     fontWeight: 'bold' as const,
     flex: 1,
     marginLeft: '10px',
+    fontSize: 'clamp(12px, 2.5vw, 14px)',
   },
   alertTime: {
     color: '#888',
-    fontSize: '12px',
+    fontSize: 'clamp(10px, 2vw, 12px)',
   },
   alertBody: {
-    marginLeft: '30px',
+    marginLeft: 'clamp(20px, 5vw, 30px)',
   },
   alertMessage: {
     color: '#ff6666',
     margin: '5px 0',
     fontWeight: 'bold' as const,
+    fontSize: 'clamp(12px, 2.5vw, 14px)',
   },
   alertDetails: {
     color: '#ddd',
-    fontSize: '14px',
+    fontSize: 'clamp(11px, 2vw, 14px)',
     margin: '5px 0',
   },
   alertValue: {
