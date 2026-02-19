@@ -14,7 +14,7 @@ Real-time IoT telemetry streaming system with Python FastAPI backend, React dash
 ### Quick Start Demo:
 1. Open the [Simulator Control Panel](https://stream-monitor-simulator.onrender.com)
 2. Click the **"▶ START"** button
-3. Open the [Frontend Dashboard](https://your-app.netlify.app)
+3. Open the [Frontend Dashboard](https://stream-monitor-web.netlify.app/)
 4. Watch real-time data flow! 🚀
 
 ---
